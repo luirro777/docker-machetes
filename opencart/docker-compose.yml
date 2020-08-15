@@ -1,0 +1,39 @@
+version: "3"
+services:
+        db:
+                image: bitnami/mariadb
+                container_name: mariadb
+                environment:
+                        - ALLOW_EMPTY_PASSWORD=yes
+                        - MARIADB_USER=${MDBUSER}
+                        - MARIADB_DATABASE=${MDB}
+                volumes:
+                        - "mariadb_data:/bitnami"
+                networks:
+                        - bn-opencart
+        web:
+                image: bitnami/opencart
+                container_name: opencart
+                depends_on:
+                        - db
+                environment:
+                        - ALLOW_EMPTY_PASSWORD=yes
+                        - OPENCART_DATABASE_NAME=${MDB}
+                        - OPENCART_HOST=localhost
+                        - OPENCART_DATABASE_USER=${OCDBUSER}
+                ports:
+                        - 80:80
+                        - 443:443
+                networks:
+                        - bn-opencart
+                volumes:
+                        - "opencart_data:/bitnami"
+volumes:
+        mariadb_data:
+                driver: local
+        opencart_data:
+                driver: local
+networks:
+        bn-opencart:
+                driver: bridge
+
